@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using FoodOrderingService.RestaurantData;
+using FoodOrderingService.RD;
 using System.Xml;
 
 
@@ -18,8 +18,6 @@ namespace FoodOrderingService
         private static string receiveCSUrl = "http://localhost:8085/";
         private static string sendCSUrl = "http://localhost:8084/";
 
-        //host for data aggregator
-
         private static string restaurant1receiveUrl = "http://localhost:8086/"; //first restaurant receiver
         private static string restaurant2receiveUrl = "http://localhost:8087/"; //second restaurant receiver
         private static string restaurant3receiveUrl = "http://localhost:8088/"; //third restaurant receiver
@@ -30,7 +28,14 @@ namespace FoodOrderingService
 
         private FoodOrdering foodOrdering;
 
-        public async Task HandeIncomingConnections()
+        /*
+         Receive:
+    • register POST (RestaurantService)
+    • menu GET (ClientService)
+    • order POST (ClientService)
+         */
+
+        public async Task HandeIncomingRestaurantConnections()
         {
             bool isRunning = true;
 
@@ -44,25 +49,31 @@ namespace FoodOrderingService
                 if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/register")
                 {
                     using StreamReader streamReader = new(request.InputStream, request.ContentEncoding);
-                    DTORestaurantData data = JsonSerializer.Deserialize<DTORestaurantData>(streamReader.ReadToEnd());
+                    RestaurantData data = JsonSerializer.Deserialize<RestaurantData>(streamReader.ReadToEnd());
                     foodOrdering.RegisterData(data);
                 }
 
-                //send response to client with menus
                 else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/menu")
                 {
+
                 }
-                //send order to restaurant
-                else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/v2/order")
+
+                else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/order")
                 {
+
                 }
-                //post order to client
-                else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/v2/order")
+
+                else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/shutdown")
                 {
+                    Console.WriteLine("Shutdown of server");
+                    isRunning = false;
                 }
-                //provide order response
+
+                response.StatusCode = 200;
+                response.Close();
             }
         }
+
 
         public void SendMenu(List<Menu> menus)
         {
@@ -79,6 +90,19 @@ namespace FoodOrderingService
             {
                 LogWriter.Log($"List of menus were sent.");
             }
+        }
+
+        public async void Start(FoodOrdering foodOrdering)
+        {
+            this.foodOrdering = foodOrdering;
+
+            listener = new HttpListener();
+            listener.Prefixes.Add(receiveUrl);
+            listener.Start();
+
+            await HandleIncomingConnections();
+
+            listener.Close();
         }
     }
 }
