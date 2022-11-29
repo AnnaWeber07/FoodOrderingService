@@ -1,18 +1,17 @@
-﻿using FoodOrderingService.RestaurantData;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FoodOrderingService.RestaurantData;
+using FoodOrderingService.RD;
 using System.Runtime.CompilerServices;
 
 namespace FoodOrderingService
 {
     public class FoodOrdering : BackgroundService
     {
-        private List<DTORestaurantData> _restaurantData;
+        private List<RestaurantData> _restaurantData;
         private List<Menu> _composedMenu;
 
         private readonly object _dataLocker;
@@ -21,7 +20,7 @@ namespace FoodOrderingService
 
         public FoodOrderingServer orderingServer;
 
-        public List<DTORestaurantData> RestaurantData
+        public List<RestaurantData> RestaurantData
         {
             get
             {

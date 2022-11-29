@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoodOrderingService.RestaurantData
+namespace FoodOrderingService.RD
 {
     public class Menu
     {
         //restaurant menu parser
-        public long RestaurantId { get; set; }
-        public List<Food> MenuValues;
+        public List<Food> MenuValues { get; set; }
 
-        public Menu(long restId, List<Food> menu)
+        public Menu(List<Food> menu)
         {
-            RestaurantId = restId;
             MenuValues = menu;
         }
 
