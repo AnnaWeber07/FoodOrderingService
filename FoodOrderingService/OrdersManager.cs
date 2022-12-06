@@ -10,13 +10,13 @@ namespace FoodOrderingService
 {
     public class OrdersManager
     {
-        private readonly List<Order> _orders = new();
+        private readonly List<PostOrderV2> _orders = new();
 
 
         private readonly object _ordersLocker = new();
 
 
-        public List<Order> Orders
+        public List<PostOrderV2> Orders
         {
             get
             {
@@ -28,31 +28,31 @@ namespace FoodOrderingService
         }
 
 
-        public void AddNewOrder(Order order)
+        public void AddNewOrder(PostOrderV2 order)
         {
             Orders.Add(order);
         }
 
 
-        public void RemoveOrder(Order order)
+        public void RemoveOrder(PostOrderV2 order)
         {
             Orders.Remove(order);
         }
 
-        public void SendToRestaurant(Order order)
+        public void SendToRestaurant(PostOrderV2 order)
         {
             //serialize order
 
         }
 
-        public void SendToCient(Order order)
+        public void SendToCient(PostOrderV2 order)
         {
             //serialize order
 
             //if order state done remove from list
         }
 
-        public void ReceiveFromRestaurant(Order order)
+        public void ReceiveFromRestaurant(PostOrderV2 order)
         {
             //deserialize order
 

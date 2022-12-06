@@ -9,6 +9,6 @@ namespace FoodOrderingService
     public class ClientPostOrder
     {
         public long ClientId { get; set; }
-        public List<Order> Orders { get; set; }
+        public List<PostOrderV2> Orders { get; set; }
     }
 }
