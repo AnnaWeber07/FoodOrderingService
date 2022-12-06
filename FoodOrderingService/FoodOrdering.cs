@@ -59,7 +59,7 @@ namespace FoodOrderingService
             //logic of ordermanagersystem
         }
 
-        public void RegisterData(DTORestaurantData incomingData)
+        public void RegisterData(RestaurantData incomingData)
         {
             RestaurantData.Add(incomingData);
             var id = incomingData.RestaurantId;

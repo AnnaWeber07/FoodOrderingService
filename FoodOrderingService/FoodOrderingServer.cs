@@ -1,4 +1,4 @@
-﻿using FoodOrderingService.RestaurantData;
+﻿using FoodOrderingService.RD;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace FoodOrderingService
     • order POST (ClientService)
          */
 
-        public async Task HandeIncomingRestaurantConnections()
+        public async Task HandleIncomingRestaurantConnections()
         {
             bool isRunning = true;
 
@@ -55,7 +55,8 @@ namespace FoodOrderingService
 
                 else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/menu")
                 {
-
+                    using StreamReader streamreader = new(request.InputStream, request.ContentEncoding);
+                    SendMenu();
                 }
 
                 else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/order")
@@ -63,7 +64,7 @@ namespace FoodOrderingService
 
                 }
 
-                else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/shutdown")
+                else if ((request.HttpMethod == "POST" || request.HttpMethod == "GET") && request.Url.AbsolutePath == "/shutdown")
                 {
                     Console.WriteLine("Shutdown of server");
                     isRunning = false;
@@ -97,10 +98,10 @@ namespace FoodOrderingService
             this.foodOrdering = foodOrdering;
 
             listener = new HttpListener();
-            listener.Prefixes.Add(receiveUrl);
+            listener.Prefixes.Add(receiveCSUrl);
             listener.Start();
 
-            await HandleIncomingConnections();
+            await HandleIncomingRestaurantConnections();
 
             listener.Close();
         }

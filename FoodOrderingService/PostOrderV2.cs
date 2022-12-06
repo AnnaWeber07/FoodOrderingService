@@ -9,7 +9,7 @@ using FoodOrderingService.RD;
 
 namespace FoodOrderingService
 {
-    public class Order
+    public class PostOrderV2
     {
         public long RestaurantId { get; set; }
         public List<long> Items { get; set; }
