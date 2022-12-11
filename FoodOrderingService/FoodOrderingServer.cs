@@ -18,15 +18,9 @@ namespace FoodOrderingService
         private static string receiveCSUrl = "http://localhost:8085/";
         private static string sendCSUrl = "http://localhost:8084/";
 
-        private static string restaurant1receiveUrl = "http://localhost:8086/"; //first restaurant receiver
-        private static string restaurant2receiveUrl = "http://localhost:8087/"; //second restaurant receiver
-        private static string restaurant3receiveUrl = "http://localhost:8088/"; //third restaurant receiver
-
-        private static string restaurant1sendUrl = "http://localhost:8089/"; //first restaurant sender
-        private static string restaurant2sendUrl = "http://localhost:8090/"; //second restaurant sender
-        private static string restaurant3sendUrl = "http://localhost:8091/"; //third restaurant sender
-
+       
         private FoodOrdering foodOrdering;
+        private OrdersManager ordersManager;
 
         /*
          Receive:
@@ -49,19 +43,25 @@ namespace FoodOrderingService
                 if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/register")
                 {
                     using StreamReader streamReader = new(request.InputStream, request.ContentEncoding);
-                    RestaurantData data = JsonSerializer.Deserialize<RestaurantData>(streamReader.ReadToEnd());
-                    foodOrdering.RegisterData(data);
+                    // RestaurantData data = JsonSerializer.Deserialize<RestaurantData>(streamReader.ReadToEnd());
+                    DataRegistration dataRegistration = JsonSerializer.Deserialize<DataRegistration>(streamReader.ReadToEnd());
+                    foodOrdering.RegisterData(dataRegistration);
                 }
 
                 else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/menu")
                 {
                     using StreamReader streamreader = new(request.InputStream, request.ContentEncoding);
-                    SendMenu();
+
+                    //todo: send menu as response
                 }
 
                 else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/order")
                 {
+                    using StreamReader streamReader = new(request.InputStream, request.ContentEncoding);
+                    ClientPostOrder clientPostOrder = JsonSerializer.Deserialize<ClientPostOrder>(streamReader.ReadToEnd());
+                    ordersManager.ClientPostOrders.Add(clientPostOrder);
 
+                    //check all necessary stuff for this order and retransmit it to the restaurant
                 }
 
                 else if ((request.HttpMethod == "POST" || request.HttpMethod == "GET") && request.Url.AbsolutePath == "/shutdown")
