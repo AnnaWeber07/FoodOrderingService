@@ -11,33 +11,33 @@ namespace FoodOrderingService
 {
     public class FoodOrdering : BackgroundService
     {
-        private List<RestaurantData> _restaurantData;
-        private List<Menu> _composedMenu;
+        private List<DataRegistration> _dataRegistration;
+        private List<GetClientMenu> _getClientMenu;
 
-        private readonly object _dataLocker;
+        private readonly object _dataRegistrationLocker;
         private readonly object _menuLocker;
 
 
         public FoodOrderingServer orderingServer;
 
-        public List<RestaurantData> RestaurantData
+        public List<DataRegistration> DataRegistrations
         {
             get
             {
-                lock (_dataLocker)
+                lock (_dataRegistrationLocker)
                 {
-                    return _restaurantData;
+                    return _dataRegistration;
                 }
             }
         }
 
-        public List<Menu> ComposedMenu
+        public List<GetClientMenu> GetClientMenu
         {
             get
             {
                 lock (_menuLocker)
                 {
-                    return _composedMenu;
+                    return _getClientMenu;
                 }
             }
 
@@ -45,6 +45,12 @@ namespace FoodOrderingService
 
         public OrdersManager ordersManager;
 
+
+        public FoodOrdering(FoodOrderingServer server)
+        {
+            this.orderingServer = server;
+            this.orderingServer.Start(this);
+        }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -56,26 +62,27 @@ namespace FoodOrderingService
 
         private void InitializeOrderManager()
         {
-            //logic of ordermanagersystem
+            //todo: logic of ordermanagersystem
         }
 
-        public void RegisterData(RestaurantData incomingData)
+        public void RegisterData(DataRegistration incomingData)
         {
-            RestaurantData.Add(incomingData);
+            DataRegistrations.Add(incomingData);
             var id = incomingData.RestaurantId;
-            var menuList = incomingData.RestaurantMenuItems;
-            SeparateMenu(id, menuList.MenuValues);
+            var menuList = incomingData.MenuList;
 
+            //  ComposeClientMenu();
         }
 
-        public void SeparateMenu(long id, List<Food> menuList)
+        public void ComposeClientMenu()
         {
-            Menu menu = new Menu(id, menuList);
-            ComposedMenu.Add(menu);
-
-            if (ComposedMenu.Count > 3)
+            var numberOfRestaurants = DataRegistrations.Count;
+            if (numberOfRestaurants == 4)
             {
-                orderingServer.SendMenu(ComposedMenu);
+                foreach (DataRegistration dataRegistration in DataRegistrations)
+                {
+
+                }
             }
         }
 

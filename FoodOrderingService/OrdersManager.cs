@@ -12,8 +12,20 @@ namespace FoodOrderingService
     {
         private readonly List<PostOrderV2> _orders = new();
 
-
         private readonly object _ordersLocker = new();
+
+        private readonly List<ClientPostOrder> _clientPostOrders = new();
+
+        public List<ClientPostOrder> ClientPostOrders
+        {
+            get
+            {
+                lock (_clientPostOrders)
+                {
+                    return _clientPostOrders;
+                }
+            }
+        }
 
 
         public List<PostOrderV2> Orders
