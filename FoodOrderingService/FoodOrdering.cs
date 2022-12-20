@@ -11,11 +11,12 @@ namespace FoodOrderingService
 {
     public class FoodOrdering : BackgroundService
     {
-        private List<DataRegistration> _dataRegistration;
-        private List<GetClientMenu> _getClientMenu;
+        private List<Menu> _menu = new();
+        private List<DataRegistration> _dataRegistration = new();
+        public GetClientMenu _getClientMenu = new();
 
-        private readonly object _dataRegistrationLocker;
-        private readonly object _menuLocker;
+        private readonly object _dataRegistrationLocker = new();
+        private readonly object _menuLocker = new();
 
 
         public FoodOrderingServer orderingServer;
@@ -31,7 +32,7 @@ namespace FoodOrderingService
             }
         }
 
-        public List<GetClientMenu> GetClientMenu
+        public GetClientMenu GetClientMenu
         {
             get
             {
@@ -55,14 +56,13 @@ namespace FoodOrderingService
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             InitializeOrderManager();
-
             return Task.CompletedTask;
         }
 
 
         private void InitializeOrderManager()
         {
-            //todo: logic of ordermanagersystem
+
         }
 
         public void RegisterData(DataRegistration incomingData)
@@ -71,19 +71,24 @@ namespace FoodOrderingService
             var id = incomingData.RestaurantId;
             var menuList = incomingData.MenuList;
 
-            //  ComposeClientMenu();
+            var number = 1;
+            
+            Menu createMenu = new Menu(menuList);
+
+            _menu.Add(createMenu);
+
+            RestaurantData restaurantData = new(incomingData.RestaurantName, incomingData.MenuItems, _menu);
+
+            List<RestaurantData> restaurantDatas = new();
+            restaurantDatas.Add(restaurantData);
+
+            ComposeClientMenu(number, restaurantDatas);
         }
 
-        public void ComposeClientMenu()
+        public void ComposeClientMenu(int number, List<RestaurantData> restaurantDatas)
         {
-            var numberOfRestaurants = DataRegistrations.Count;
-            if (numberOfRestaurants == 4)
-            {
-                foreach (DataRegistration dataRegistration in DataRegistrations)
-                {
-
-                }
-            }
+            GetClientMenu.datas = restaurantDatas;
+            GetClientMenu.NumberOfRestaurants = number;
         }
 
     }

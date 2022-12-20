@@ -15,10 +15,10 @@ namespace FoodOrderingService
     public class FoodOrderingServer
     {
         private static HttpListener listener;
-        private static string receiveCSUrl = "http://localhost:8085/";
-        private static string sendCSUrl = "http://localhost:8084/";
+        private static string receiveUrl = "http://localhost:8085/";
+        private static string sendUrl = "http://localhost:8084/";
 
-       
+
         private FoodOrdering foodOrdering;
         private OrdersManager ordersManager;
 
@@ -44,15 +44,46 @@ namespace FoodOrderingService
                 {
                     using StreamReader streamReader = new(request.InputStream, request.ContentEncoding);
                     // RestaurantData data = JsonSerializer.Deserialize<RestaurantData>(streamReader.ReadToEnd());
-                    DataRegistration dataRegistration = JsonSerializer.Deserialize<DataRegistration>(streamReader.ReadToEnd());
+
+
+                    var text = streamReader.ReadToEnd();
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        Console.WriteLine("null");
+                    }
+
+
+                    //DataRegistration dataRegistration = JsonSerializer.Deserialize<DataRegistration>(streamReader.ReadToEndAsync());
+                    DataRegistration dataRegistration = JsonSerializer.Deserialize<DataRegistration>(text);
+
                     foodOrdering.RegisterData(dataRegistration);
                 }
 
                 else if (request.HttpMethod == "GET" && request.Url.AbsolutePath == "/menu")
                 {
-                    using StreamReader streamreader = new(request.InputStream, request.ContentEncoding);
 
-                    //todo: send menu as response
+                    //string text = streamreader.ReadToEnd();
+
+                    var sendObject = foodOrdering.GetClientMenu;
+
+                    var json = JsonSerializer.Serialize(sendObject);
+
+                    //serialize and send menu over to client as a response
+
+                    // Get a response stream and write the response to it.
+
+                    byte[] buffer = new byte[] { };
+
+                    response.ContentType = "application/json";
+
+                    buffer = Encoding.ASCII.GetBytes(json);
+                    response.ContentLength64 = buffer.Length;
+
+                    System.IO.Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+
+                    output.Close();
+
                 }
 
                 else if (request.HttpMethod == "POST" && request.Url.AbsolutePath == "/order")
@@ -83,7 +114,7 @@ namespace FoodOrderingService
             var message = JsonSerializer.Serialize(menus);
             string mediaType = "application/json";
 
-            var response = client.PostAsync(sendCSUrl + "menu", new StringContent(message, Encoding.UTF8, mediaType))
+            var response = client.PostAsync(sendUrl + "menu", new StringContent(message, Encoding.UTF8, mediaType))
                                  .GetAwaiter()
                                  .GetResult();
 
@@ -98,7 +129,7 @@ namespace FoodOrderingService
             this.foodOrdering = foodOrdering;
 
             listener = new HttpListener();
-            listener.Prefixes.Add(receiveCSUrl);
+            listener.Prefixes.Add(receiveUrl);
             listener.Start();
 
             await HandleIncomingRestaurantConnections();

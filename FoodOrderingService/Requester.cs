@@ -19,7 +19,7 @@ namespace FoodOrderingService
                 using HttpClient client = new HttpClient();
                 var content = JsonSerializer.Serialize(orders);
                 string mediaType = "application/json";
-                var postResponse = await client.PostAsJsonAsync("http://localhost:8085/" + "ready",
+                var postResponse = await client.PostAsJsonAsync("http://localhost:8085/" + "/v2/order",
                 new StringContent(content, Encoding.UTF8, mediaType));
                 //по этому порту 8085 отправляется ответ в ресторан
 

@@ -12,5 +12,12 @@ namespace FoodOrderingService.RD
         public int MenuItems { get; set; }
         public List<Menu> menus { get; set; }
         public float Rating { get; set; }
+
+        public RestaurantData(string name, int menuItems, List<Menu> menus)
+        {
+            RestaurantName = name;
+            MenuItems = menuItems;
+            this.menus = menus;
+        }
     }
 }

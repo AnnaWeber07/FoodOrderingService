@@ -22,5 +22,10 @@ namespace FoodOrderingService.RD
             Comlexity = complexity;
             CookingApparatus = cookingApparatus;
         }
+
+        public Food()
+        {
+
+        }
     }
 }
