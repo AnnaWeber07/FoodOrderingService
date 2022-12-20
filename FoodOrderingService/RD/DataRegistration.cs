@@ -21,6 +21,15 @@ namespace FoodOrderingService.RD
 
         }
 
+        public DataRegistration(long restaurantId, string restaurantName, int menuItems, List<Food> menuList, float rating)
+        {
+            RestaurantId = restaurantId;
+            RestaurantName = restaurantName;
+            MenuItems = menuItems;
+            MenuList = menuList;
+            Rating = rating;
+        }
+
         //[JsonConstructor]
         //public DataRegistration(long RestaurantId, string RestaurantName, int MenuItems,
         //    List<Food> MenuList, float Rating)

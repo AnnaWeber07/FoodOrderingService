@@ -10,5 +10,16 @@ namespace FoodOrderingService.RD
     {
         public int NumberOfRestaurants { get; set; }
         public List<RestaurantData> datas { get; set; }
+
+        public GetClientMenu()
+        {
+
+        }
+
+        public GetClientMenu(List<RestaurantData> datas)
+        {
+            NumberOfRestaurants = 1;
+            this.datas = datas;
+        }
     }
 }
